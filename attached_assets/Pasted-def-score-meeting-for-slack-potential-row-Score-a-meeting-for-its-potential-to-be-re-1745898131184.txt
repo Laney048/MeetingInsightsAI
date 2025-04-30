@@ -1,0 +1,64 @@
+def score_meeting_for_slack_potential(row):
+    “”"
+    Score a meeting for its potential to be replaced by a Slack message.
+    Higher score (closer to 1) indicates higher potential for being a Slack message.
+    Parameters:
+    row (pandas Series): A row of meeting data containing the required features
+    Returns:
+    float: Score between 0 and 1 indicating Slack message potential
+    “”"
+    score = 0
+    max_score = 0
+    # Convert Yes/No to 1/0 if needed
+    decision_made = 1 if row[‘Decision made’] == ‘Yes’ else 0
+    agenda_provided = 1 if row[‘Agenda Provided’] == ‘Yes’ else 0
+    follow_up_sent = 1 if row[‘Follow-up sent’] == ‘Yes’ else 0
+    could_be_async = 1 if row[‘Could be Async’] == ‘Yes’ else 0
+    # Factor 1: Short meetings are better candidates for Slack
+    # Weight: 20%
+    max_score += 20
+    if row[‘Duration Minutes’] <= 15:
+        score += 20
+    elif row[‘Duration Minutes’] <= 30:
+        score += 10
+    # Factor 2: Meetings with few actual speakers relative to participants
+    # Weight: 20%
+    max_score += 20
+    speaker_ratio = row[‘Actual speakers’] / row[‘Participants’]
+    if speaker_ratio <= 0.25:
+        score += 20  # One-way information flow, ideal for Slack
+    elif speaker_ratio <= 0.5:
+        score += 10  # Limited participation, good for Slack
+    # Factor 3: Meetings without decisions are better for Slack
+    # Weight: 20%
+    max_score += 20
+    if decision_made == 0:
+        score += 20
+    # Factor 4: If already marked as “Could be Async”
+    # Weight: 20%
+    max_score += 20
+    if could_be_async == 1:
+        score += 20
+    # Factor 5: Large meetings with few speakers
+    # Weight: 10%
+    max_score += 10
+    if row[‘Participants’] > 5 and row[‘Actual speakers’] <= 2:
+        score += 10
+    # Factor 6: Meetings with follow-up sent
+    # Weight: 10%
+    max_score += 10
+    if follow_up_sent == 1:
+        score += 10  # Information that needed to be documented anyway
+    # Normalize score to 0-1 range
+    normalized_score = score / max_score
+    return normalized_score
+# Example usage:
+# df[‘slack_potential’] = df.apply(score_meeting_for_slack_potential, axis=1)
+# High-potential meetings for Slack replacement:
+# slack_candidates = df[df[‘slack_potential’] > 0.7] (edited) 
+
+
+
+
+
+

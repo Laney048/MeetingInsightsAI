@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Meeting Analyzer Dashboard</title>
+  <style>
+    :root {
+      --primary: #4361ee;
+      --accent: #3a0ca3;
+      --green: #2dc653;
+      --yellow: #ffb703;
+      --red: #e63946;
+      --light-gray: #f8f9fa;
+      --gray: #e9ecef;
+      --dark-gray: #6c757d;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    }
+    
+    body {
+      background-color: #f5f7fa;
+      color: #333;
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+    
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+    }
+    
+    h1, h2, h3 {
+      color: #2b2d42;
+    }
+    
+    .date-range {
+      background-color: white;
+      border: 1px solid var(--gray);
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .summary-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    
+    .card {
+      background-color: white;
+      border-radius: 10px;
+      padding: 1.5rem;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    }
+    
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+    
+    .card-title {
+      font-size: 1rem;
+      color: var(--dark-gray);
+      font-weight: 500;
+    }
+    
+    .card-value {
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+    
+    .card-footer {
+      font-size: 0.875rem;
+      color: var(--dark-gray);
+    }
+    
+    .score-indicator {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.875rem;
+    }
+    
+    .high {
+      background-color: rgba(45, 198, 83, 0.1);
+      color: var(--green);
+    }
+    
+    .medium {
+      background-color: rgba(255, 183, 3, 0.1);
+      color: var(--yellow);
+    }
+    
+    .low {
+      background-color: rgba(230, 57, 70, 0.1);
+      color: var(--red);
+    }
+    
+    .section {
+      margin-bottom: 2rem;
+    }
+    
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+    
+    .meetings-table {
+      width: 100%;
+      background-color: white;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    }
+    
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    
+    th {
+      text-align: left;
+      padding: 1rem;
+      background-color: var(--gray);
+      font-weight: 600;
+    }
+    
+    td {
+      padding: 1rem;
+      border-top: 1px solid var(--light-gray);
+    }
+    
+    tr:hover {
+      background-color: var(--light-gray);
+    }
+    
+    .badge {
+      display: inline-block;
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+    
+    .badge-high {
+      background-color: rgba(45, 198, 83, 0.1);
+      color: var(--green);
+    }
+    
+    .badge-medium {
+      background-color: rgba(255, 183, 3, 0.1);
+      color: var(--yellow);
+    }
+    
+    .badge-low {
+      background-color: rgba(230, 57, 70, 0.1);
+      color: var(--red);
+    }
+    
+    .action-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--primary);
+      font-weight: 500;
+      font-size: 0.875rem;
+    }
+    
+    .chart-container {
+      height: 250px;
+      margin-bottom: 1rem;
+    }
+    
+    .recommendations {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+    }
+    
+    .rec-card {
+      background-color: white;
+      border-radius: 10px;
+      padding: 1.5rem;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    }
+    
+    .rec-card h3 {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+      font-size: 1.125rem;
+    }
+    
+    .rec-list {
+      list-style: none;
+    }
+    
+    .rec-item {
+      padding: 0.75rem 0;
+      border-bottom: 1px solid var(--light-gray);
+    }
+    
+    .rec-item:last-child {
+      border-bottom: none;
+    }
+    
+    .rec-title {
+      font-weight: 500;
+      margin-bottom: 0.25rem;
+    }
+    
+    .rec-reason {
+      font-size: 0.875rem;
+      color: var(--dark-gray);
+    }
+    
+    .rec-action {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 0.5rem;
+    }
+    
+    .btn {
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+    }
+    
+    .btn-primary {
+      background-color: var(--primary);
+      color: white;
+    }
+    
+    .btn-outline {
+      background-color: white;
+      color: var(--dark-gray);
+      border: 1px solid var(--gray);
+    }
+    
+    .circle {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      display: inline-block;
+      margin-right: 4px;
+    }
+    
+    .meeting-score {
+      display: flex;
+      align-items: center;
+    }
+    
+    .tooltip {
+      position: relative;
+      display: inline-block;
+      cursor: help;
+    }
+    
+    .tooltip .tooltiptext {
+      visibility: hidden;
+      width: 200px;
+      background-color: #333;
+      color: #fff;
+      text-align: center;
+      border-radius: 6px;
+      padding: 5px;
+      position: absolute;
+      z-index: 1;
+      bottom: 125%;
+      left: 50%;
+      margin-left: -100px;
+      opacity: 0;
+      transition: opacity 0.3s;
+      font-size: 0.75rem;
+    }
+    
+    .tooltip:hover .tooltiptext {
+      visibility: visible;
+      opacity: 1;
+    }
+    
+    .chart {
+      display: flex;
+      height: 200px;
+      align-items: flex-end;
+      padding: 1rem 0;
+      gap: 10px;
+    }
+    
+    .chart-bar {
+      flex: 1;
+      background-color: var(--primary);
+      border-radius: 3px 3px 0 0;
+      position: relative;
+    }
+    
+    .chart-label {
+      position: absolute;
+      bottom: -20px;
+      left: 0;
+      right: 0;
+      text-align: center;
+      font-size: 0.75rem;
+      color: var(--dark-gray);
+    }
+    
+    .chart-value {
+      position: absolute;
+      top: -20px;
+      left: 0;
+      right: 0;
+      text-align: center;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Meeting Analyzer Dashboard</h1>
+      <div class="date-range">
+        <span>April 1-28, 2025</span>
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M6 9l6 6 6-6"/>
+        </svg>
+      </div>
+    </header>
+    
+    <div class="summary-cards">
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Total Meetings</span>
+          <div class="score-indicator high">15</div>
+        </div>
+        <div class="card-value">15</div>
+        <div class="card-footer">5.3 hours per week</div>
+      </div>
+      
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Useful Meetings</span>
+          <div class="score-indicator low">3</div>
+        </div>
+        <div class="card-value">20%</div>
+        <div class="card-footer">Only 3 of 15 meetings were valuable</div>
+      </div>
+      
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Time Saved</span>
+          <div class="score-indicator high">7h</div>
+        </div>
+        <div class="card-value">7.5 hours</div>
+        <div class="card-footer">This month by declining low-value meetings</div>
+      </div>
+      
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Slack Potential</span>
+          <div class="score-indicator high">6</div>
+        </div>
+        <div class="card-value">6 meetings</div>
+        <div class="card-footer">Could be replaced with Slack threads</div>
+      </div>
+      
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Average
+    
+    <div class="section">
+      <div class="section-header">
+        <h2>Meeting Usefulness Trend</h2>
+      </div>
+      <div class="card chart-container">
+        <div class="chart">
+          <div class="chart-bar" style="height: 20%;">
+            <div class="chart-value">20%</div>
+            <div class="chart-label">W1</div>
+          </div>
+          <div class="chart-bar" style="height: 35%;">
+            <div class="chart-value">35%</div>
+            <div class="chart-label">W2</div>
+          </div>
+          <div class="chart-bar" style="height: 52%;">
+            <div class="chart-value">52%</div>
+            <div class="chart-label">W3</div>
+          </div>
+          <div class="chart-bar" style="height: 85%;">
+            <div class="chart-value">85%</div>
+            <div class="chart-label">W4</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="section">
+      <div class="section-header">
+        <h2>Recent Meetings</h2>
+        <button class="action-btn">View All</button>
+      </div>
+      <div class="meetings-table">
+        <table>
+          <thead>
+            <tr>
+              <th>Meeting</th>
+              <th>Date</th>
+              <th>Duration</th>
+              <th>Decisions</th>
+              <th>Actions</th>
+              <th>Score</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Weekly Product Sync</td>
+              <td>Apr 21, 2025</td>
+              <td>60 min</td>
+              <td>3</td>
+              <td>2</td>
+              <td>
+                <div class="meeting-score">
+                  <span class="circle" style="background-color: var(--green);"></span>
+                  <span>85%</span>
+                </div>
+              </td>
+              <td>
+                <div class="tooltip">
+                  <button class="action-btn">View Details</button>
+                  <span class="tooltiptext">See full meeting analysis</span>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td>Team Status Update</td>
+              <td>Apr 22, 2025</td>
+              <td>30 min</td>
+              <td>0</td>
+              <td>0</td>
+              <td>
+                <div class="meeting-score">
+                  <span class="circle" style="background-color: var(--red);"></span>
+                  <span>25%</span>
+                </div>
+              </td>
+              <td>
+                <div class="tooltip">
+                  <button class="action-btn">View Details</button>
+                  <span class="tooltiptext">See full meeting analysis</span>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td>Engineering Planning</td>
+              <td>Apr 23, 2025</td>
+              <td>45 min</td>
+              <td>4</td>
+              <td>5</td>
+              <td>
+                <div class="meeting-score">
+                  <span class="circle" style="background-color: var(--green);"></span>
+                  <span>92%</span>
+                </div>
+              </td>
+              <td>
+                <div class="tooltip">
+                  <button class="action-btn">View Details</button>
+                  <span class="tooltiptext">See full meeting analysis</span>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td>Marketing Sync</td>
+              <td>Apr 24, 2025</td>
+              <td>30 min</td>
+              <td>1</td>
+              <td>2</td>
+              <td>
+                <div class="meeting-score">
+                  <span class="circle" style="background-color: var(--yellow);"></span>
+                  <span>62%</span>
+                </div>
+              </td>
+              <td>
+                <div class="tooltip">
+                  <button class="action-btn">View Details</button>
+                  <span class="tooltiptext">See full meeting analysis</span>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td>Department All-Hands</td>
+              <td>Apr 25, 2025</td>
+              <td>60 min</td>
+              <td>0</td>
+              <td>1</td>
+              <td>
+                <div class="meeting-score">
+                  <span class="circle" style="background-color: var(--red);"></span>
+                  <span>32%</span>
+                </div>
+              </td>
+              <td>
+                <div class="tooltip">
+                  <button class="action-btn">View Details</button>
+                  <span class="tooltiptext">See full meeting analysis</span>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    
+    <div class="recommendations">
+      <div class="rec-card">
+        <h3>
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#e63946" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="15" y1="9" x2="9" y2="15"></line>
+            <line x1="9" y1="9" x2="15" y2="15"></line>
+          </svg>
+          Recommended to Decline
+        </h3>
+        <ul class="rec-list">
+          <li class="rec-item">
+            <div class="rec-title">Team Status Update</div>
+            <div class="rec-reason">Update-only meeting with no decisions or actions (25% score)</div>
+            <div class="rec-action">
+              <button class="btn btn-primary">Auto-Decline Series</button>
+              <button class="btn btn-outline">Suggest Async</button>
+            </div>
+          </li>
+          <li class="rec-item">
+            <div class="rec-title">Department All-Hands</div>
+            <div class="rec-reason">One-way information sharing, can be done async (32% score)</div>
+            <div class="rec-action">
+              <button class="btn btn-primary">Auto-Decline Series</button>
+              <button class="btn btn-outline">Suggest Async</button>
+            </div>
+          </li>
+          <li class="rec-item">
+            <div class="rec-title">General Check-in</div>
+            <div class="rec-reason">Consistently low value over 4 occurrences (28% score)</div>
+            <div class="rec-action">
+              <button class="btn btn-primary">Auto-Decline Series</button>
+              <button class="btn btn-outline">Suggest Async</button>
+            </div>
+          </li>
+        </ul>
+      </div>
+      
+      <div class="rec-card">
+        <h3>
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#4361ee" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <path d="M8 12h8"></path>
+            <path d="M12 16V8"></path>
+          </svg>
+          Slack Replacements
+        </h3>
+        <ul class="rec-list">
+          <li class="rec-item">
+            <div class="rec-title">Weekly Team Updates</div>
+            <div class="rec-reason">Perfect for Slack (78% Slack potential) - one-way information sharing</div>
+            <div class="rec-action">
+              <button class="btn btn-primary">Convert to Slack Thread</button>
+              <button class="btn btn-outline">Create Template</button>
+            </div>
+          </li>
+          <li class="rec-item">
+            <div class="rec-title">Project Status Check</div>
+            <div class="rec-reason">Good fit for Slack (82% Slack potential) - few speakers, no decisions</div>
+            <div class="rec-action">
+              <button class="btn btn-primary">Convert to Slack Thread</button>
+              <button class="btn btn-outline">Create Template</button>
+            </div>
+          </li>
+          <li class="rec-item">
+            <div class="rec-title">Release Announcements</div>
+            <div class="rec-reason">Ideal for Slack (93% Slack potential) - one-way broadcasts</div>
+            <div class="rec-action">
+              <button class="btn btn-primary">Convert to Slack Thread</button>
+              <button class="btn btn-outline">Create Template</button>
+            </div>
+          </li>
+        </ul>
+      </div>
+      
+      <div class="rec-card">
+        <h3>
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ffb703" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="8" x2="12" y2="12"></line>
+            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+          </svg>
+          Improvement Suggestions
+        </h3>
+        <ul class="rec-list">
+          <li class="rec-item">
+            <div class="rec-title">Marketing Sync</div>
+            <div class="rec-reason">Potential to improve with clear agenda (62% score)</div>
+            <div class="rec-action">
+              <button class="btn btn-primary">Request Agenda</button>
+              <button class="btn btn-outline">Shorten to 15 min</button>
+            </div>
+          </li>
+          <li class="rec-item">
+            <div class="rec-title">Project Review</div>
+            <div class="rec-reason">Too many participants, reduce to key stakeholders (56% score)</div>
+            <div class="rec-action">
+              <button class="btn btn-primary">Suggest Fewer Attendees</button>
+              <button class="btn btn-outline">Improve Format</button>
+            </div>
+          </li>
+          <li class="rec-item">
+            <div class="rec-title">Customer Feedback Session</div>
+            <div class="rec-reason">Missing clear outcomes or decisions (58% score)</div>
+            <div class="rec-action">
+              <button class="btn btn-primary">Request Decision Focus</button>
+              <button class="btn btn-outline">Improve Format</button>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

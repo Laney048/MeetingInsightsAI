@@ -1,0 +1,61 @@
+Meeting_Title,Duration_Minutes,Participants,Actual_Speakers,Decision_Made,Agenda_Provided,Follow_Up_Sent,Could_Be_Async
+Sprint Planning,30,5,2,Yes,No,No,No
+Cross-Team Sync,60,12,1,No,No,No,Yes
+Budget Review,60,5,2,No,No,No,No
+Leadership Roundtable,30,16,1,No,No,Yes,Yes
+Security Briefing,30,5,1,No,No,No,No
+Security Briefing,90,12,4,Yes,No,No,Yes
+Budget Review,60,11,5,No,No,Yes,No
+Weekly Standup,60,13,5,No,Yes,Yes,Yes
+QA Review,90,3,3,No,No,Yes,Yes
+Go-To-Market Strategy,90,17,3,No,No,No,No
+Security Briefing,60,5,4,No,No,No,Yes
+QA Review,15,8,3,No,No,No,Yes
+QA Review,60,4,4,Yes,No,No,Yes
+Product Sync,60,3,3,No,No,Yes,Yes
+Engineering Retrospective,45,18,6,No,Yes,Yes,Yes
+Engineering Retrospective,30,12,4,No,Yes,Yes,No
+Cross-Team Sync,30,8,3,Yes,No,No,Yes
+Sprint Planning,15,17,1,No,No,No,Yes
+Engineering Retrospective,45,16,4,No,Yes,No,No
+Marketing Check-in,60,9,5,No,Yes,No,Yes
+Design Review,90,11,1,No,No,No,No
+Cross-Team Sync,60,7,4,No,No,No,No
+Leadership Roundtable,90,15,4,No,Yes,No,Yes
+Cross-Team Sync,60,10,4,Yes,No,No,Yes
+Budget Review,60,15,6,No,No,Yes,Yes
+Engineering Retrospective,90,13,1,No,Yes,No,Yes
+Weekly Standup,30,16,6,No,Yes,No,Yes
+Design Review,90,15,6,Yes,No,No,No
+Data Deep Dive,45,18,5,Yes,No,Yes,Yes
+QA Review,45,10,6,Yes,No,Yes,No
+Budget Review,15,17,2,No,Yes,Yes,Yes
+Leadership Roundtable,15,12,3,No,No,Yes,Yes
+Engineering Retrospective,60,8,2,No,Yes,No,Yes
+Cross-Team Sync,30,18,5,No,Yes,No,No
+Customer Success Update,60,11,6,Yes,No,No,No
+Engineering Retrospective,30,5,4,No,No,No,No
+Data Deep Dive,45,17,3,No,No,No,Yes
+Sprint Planning,60,14,5,No,No,No,Yes
+Security Briefing,60,11,1,Yes,No,No,Yes
+Security Briefing,45,10,5,No,Yes,No,Yes
+Cross-Team Sync,45,7,6,Yes,No,No,Yes
+Customer Success Update,60,4,3,No,Yes,No,Yes
+Budget Review,60,8,2,No,No,No,No
+Engineering Retrospective,45,8,3,No,No,No,Yes
+Leadership Roundtable,15,17,1,No,Yes,No,No
+QA Review,60,14,1,No,Yes,No,No
+Product Sync,60,14,6,No,No,No,No
+Design Review,15,10,4,Yes,No,No,Yes
+Ops Status Call,90,10,6,Yes,No,No,No
+Customer Success Update,60,6,2,Yes,Yes,No,Yes
+Product Sync,15,10,5,No,No,No,Yes
+QA Review,90,16,5,No,No,No,Yes
+Security Briefing,60,16,3,Yes,No,No,Yes
+Go-To-Market Strategy,60,10,3,Yes,No,No,No
+Ops Status Call,45,4,4,No,Yes,Yes,Yes
+Product Sync,30,3,1,No,Yes,Yes,No
+Sprint Planning,15,9,5,No,Yes,No,Yes
+Leadership Roundtable,90,3,2,No,Yes,No,Yes
+Leadership Roundtable,30,6,6,Yes,Yes,Yes,Yes
+Leadership Roundtable,30,13,1,No,No,Yes,Yes
